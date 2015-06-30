@@ -36,7 +36,6 @@ export DATA_DIR="$PROJECT_DIR/data"
 # Places for Launcher bits
 #
 export PARAMS_DIR="$SCRIPT_DIR/params"
-export LAUNCHER_DIR="$SCRIPT_DIR/launcher"
 
 #
 # Where to find the host genome for screening

@@ -81,4 +81,4 @@ fi
 
 SLURM_OUT=$PWD/out/$PROG
 init_dirs $SLURM_OUT
-sbatch -J pair-cmp -o "$SLURM_OUT/%j" $LAUNCHER_DIR/launcher.sh $PARAMS_FILE
+sbatch -J pair-cmp -o "$SLURM_OUT/%j" $BIN/launcher.sh $PARAMS_FILE

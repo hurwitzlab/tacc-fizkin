@@ -10,6 +10,9 @@
 
 set -u
 export BIN="$( readlink -f -- "${0%/*}" )"
+if [ -f $BIN ]; then
+  BIN=$(dirname $BIN)
+fi
 export CONFIG=$BIN/config.sh
 
 if [[ ! -e $CONFIG ]]; then
@@ -41,11 +44,6 @@ fi
 if [[  ! -d $PARAMS_DIR ]]; then
   echo Making PARAMS_DIR \"$PARAMS_DIR\"
   mkdir -p $PARAMS_DIR
-fi
-
-if [[  ! -d $LAUNCHER_DIR ]]; then
-  echo Missing LAUNCHER_DIR \"$LAUNCHER_DIR\"
-  exit
 fi
 
 export FILES_LIST=$(mktemp)
@@ -82,4 +80,4 @@ done < $FILES_LIST
 
 SLURM_OUT=$PWD/out/$PROG
 init_dirs $SLURM_OUT
-sbatch -J count -o "$SLURM_OUT/%j" $LAUNCHER_DIR/launcher.sh $PARAMS_FILE
+sbatch -J count -o "$SLURM_OUT/%j" $BIN/launcher.sh $PARAMS_FILE

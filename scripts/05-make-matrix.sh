@@ -40,4 +40,4 @@ init_dirs $SLURM_OUT
 
 echo "$PERL $WORKER_DIR/make-matrix.pl -d $MODE_DIR > $MATRIX_DIR/matrix.tab" > $PARAMS_FILE
 
-sbatch -J matrix -o "$SLURM_OUT/%j" $LAUNCHER_DIR/launcher.sh $PARAMS_FILE
+sbatch -J matrix -o "$SLURM_OUT/%j" $BIN/launcher.sh $PARAMS_FILE
