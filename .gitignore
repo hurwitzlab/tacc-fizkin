@@ -18,6 +18,7 @@ nytprof.out
 *.o
 *.bs
 /_eumm/
-scripts/out
-scripts/params
+stampede/scripts/out
+stampede/scripts/params
 *.swp
+bin.tgz
