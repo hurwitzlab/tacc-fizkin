@@ -1,9 +1,10 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 $| = 1;
 
 use common::sense;
 use autodie;
+use Data::Dump 'dump';
 use File::Basename qw(dirname basename);
 use File::Find::Rule;
 use Getopt::Long;
@@ -15,12 +16,14 @@ main();
 
 # --------------------------------------------------
 sub main {
-    my $dir = '';
+    my $dir  = '';
+    my $skip = '';
     my ($help, $man_page);
     GetOptions(
-        'd|dir=s' => \$dir,
-        'help'    => \$help,
-        'man'     => \$man_page,
+        'd|dir=s'  => \$dir,
+        's|skip:s' => \$skip,
+        'help'     => \$help,
+        'man'      => \$man_page,
     ) or pod2usage(2);
 
     if ($help || $man_page) {
@@ -39,7 +42,12 @@ sub main {
     }
 
     say STDERR "Looking for files in '$dir'";
-    my @files = File::Find::Rule->file()->in($dir);
+    my %skip  = map  { $_, 1 } split(/\s*,\s*/, $skip);
+    my @files = grep { 
+        (! defined $skip{ basename($_) }) 
+        && 
+        (! defined $skip{ basename(dirname($_)) })
+    } File::Find::Rule->file()->in($dir);
 
     unless (@files) {
         pod2usage("Found no regular files in dir '$dir'");
@@ -102,11 +110,14 @@ make-matrix.pl - reduce pair-wise mode values to a tab-delimited matrix
 
   make-matrix.pl -d /path/to/modes > matrix
 
-Options:
+Required Arguments:
 
-  -d|--dir  Directory containing the modes
-  --help    Show brief help and exit
-  --man     Show full documentation
+  -d|--dir   Directory containing the modes
+
+Options:
+  -s|--skip  Comma-separated list of sample to skip
+  --help     Show brief help and exit
+  --man      Show full documentation
 
 =head1 DESCRIPTION
 

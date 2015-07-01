@@ -1,0 +1,73 @@
+{"available":true,
+ "checkpointable":false,
+ "defaultMemoryPerNode":32,
+ "defaultProcessorsPerNode":16,
+ "defaultMaxRunTime":"08:00:00",
+ "defaultNodeCount":1,
+ "defaultQueue":"serial",
+ "deploymentPath":"kyclark/applications/fizkin-0.0.1",
+ "deploymentSystem":"data.iplantcollaborative.org",
+ "executionSystem":"stampede-02232015-1013-kyclark",
+ "executionType":"HPC",
+ "helpURI":"https://github.com/hurwitzlab/tacc-fizkin",
+ "label": "Fizkin k-mer analysis",
+ "longDescription":"",
+ "modules":[],
+ "name":"kyclark-fizkin",
+ "ontology":["http://sswapmeet.sswap.info/agave/apps/Application"],
+ "parallelism":"SERIAL",
+ "shortDescription":"Pairwise k-mer analysis of sequences",
+ "tags":["kmer"],
+ "templatePath":"fizkin.template",
+ "testPath":"test-run.sh",
+ "version":"0.0.1",
+ "inputs":[
+    {"id":"inputFiles",
+     "value":
+        {"default":"input.fa",
+         "order":0,
+         "required":true,
+         "validator":"",
+         "visible":true},
+     "semantics":
+        {"ontology":["http://sswapmeet.sswap.info/mime/application/X-bam"],
+         "minCardinality":1,
+         "fileTypes":["raw-0"]},
+     "details":
+        {"description":"",
+         "label":"List of FASTA files to compare",
+         "argument":null,
+         "showArgument":false}}],
+ "parameters":[
+    {"id":"merSize",
+     "value":
+        {"default":20,
+         "order":1,
+         "required":true,
+         "type":"number",
+         "validator":"",
+         "visible":true},
+     "semantics":
+        {"ontology":["xs:integer"]},
+     "details":
+        {"description":null,
+         "label":"Mer size",
+         "argument":"-m ",
+         "showArgument":false}}],
+ "outputs":[
+    {"id":"matrix",
+     "value":
+        {"default":"matrix.txt",
+         "order":0,
+         "required":false,
+         "validator":"",
+         "visible":true},
+     "semantics":
+        {"ontology":["http://sswapmeet.sswap.info/mime/application/X-bam"],
+         "minCardinality":1,
+         "fileTypes":["raw-0"]},
+     "details":
+        {"description":"",
+         "label":"Matrix file",
+         "argument":null,
+         "showArgument":false}}]}

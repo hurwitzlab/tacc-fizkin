@@ -1,0 +1,5 @@
+INPUT_FILES=${inputFiles}
+MER_SIZE=${inputFiles}
+
+echo INPUT_FILES \"$INPUT_FILES\"
+echo MER_SIZE \"$MER_SIZE\"
