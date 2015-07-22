@@ -1,10 +1,17 @@
 #!/bin/bash
 
 # --------------------------------------------------
+# 00-qc-fastq.sh
+# 
+# This script runs illumina QC on a directory
+# of fastq files, runs the paired read analysis,
+# then creates fasta/qual files from the paired
+# fastq files
 #
-# 03-jellyfish-count-screened.sh
-#
-# Index host-screened FASTA for pairwise analysis
+# For example:
+# paired reads are in separate files:
+# RNA_1_ACAGTG_L008_R1_001.fastq
+# RNA_1_ACAGTG_L008_R2_001.fastq
 #
 # --------------------------------------------------
 
@@ -13,6 +20,7 @@ export BIN="$( readlink -f -- "${0%/*}" )"
 if [ -f $BIN ]; then
   BIN=$(dirname $BIN)
 fi
+
 export CONFIG=$BIN/config.sh
 
 if [[ ! -e $CONFIG ]]; then
@@ -22,32 +30,31 @@ fi
 
 source $CONFIG
 
-export SOURCE_DIR="$FASTA_DIR"
-export OUT_DIR="$JELLYFISH_DIR"
-export STEP_SIZE=100
-export CWD="$PWD"
+SOURCE_DIR=${RAW_DIR:-''}
 
-# --------------------------------------------------
+echo SOURCE_DIR \"$SOURCE_DIR\"
 
-PROG=$(basename "$0" ".sh")
-
-if [[  ! -d $KMER_DIR ]]; then
-  echo Making KMER_DIR \"$KMER_DIR\"
-  mkdir -p $KMER_DIR
+if [[ ! -d $SOURCE_DIR ]]; then
+  echo Bad SOURCE_DIR 
+  exit 0
 fi
 
-if [[  ! -d $OUT_DIR ]]; then
-  echo Making OUT_DIR \"$OUT_DIR\"
-  mkdir -p $OUT_DIR
+if [[ ! -d $FASTQ_DIR ]]; then
+  echo Making FASTQ dir
+  mkdir -p $FASTQ_DIR
 fi
 
-if [[  ! -d $PARAMS_DIR ]]; then
-  echo Making PARAMS_DIR \"$PARAMS_DIR\"
+if [[ ! -d $FASTA_DIR ]]; then
+  echo Making FASTA dir
+  mkdir -p $FASTA_DIR
+fi
+
+if [[ ! -d $PARAMS_DIR ]]; then
+  echo Making PARAMS dir
   mkdir -p $PARAMS_DIR
 fi
 
 export FILES_LIST=$(mktemp)
-echo FILES_LIST \"$FILES_LIST\"
 
 INPUT_FILES_LIST=${1:-''}
 if [ -n "$INPUT_FILES_LIST" ] && [ -e "$INPUT_FILES_LIST" ]; then
@@ -62,7 +69,7 @@ if [ -n "$INPUT_FILES_LIST" ] && [ -e "$INPUT_FILES_LIST" ]; then
   done < $INPUT_FILES_LIST 
 else
   echo Taking files from DIR \"$SOURCE_DIR\"
-  find $SOURCE_DIR -name \*.fa > $FILES_LIST
+  find $SOURCE_DIR -type f > $FILES_LIST
 fi
 
 NUM_FILES=$(lc $FILES_LIST)
@@ -74,6 +81,7 @@ if [ $NUM_FILES -lt 1 ]; then
   exit 1
 fi
 
+PROG=$(basename $0 ".sh")
 export PARAMS_FILE="$PARAMS_DIR/${PROG}.params"
 
 if [ -e $PARAMS_FILE ]; then
@@ -82,8 +90,12 @@ if [ -e $PARAMS_FILE ]; then
 fi
 
 while read FILE; do
-  echo CONFIG=$CONFIG $BIN/workers/jellyfish-count.sh $FILE >> $PARAMS_FILE
+  echo CONFIG=$CONFIG $BIN/workers/qc_fastq.sh $FILE >> $PARAMS_FILE
 done < $FILES_LIST
+
+SLURM_OUT=$PWD/out/$PROG
+
+init_dirs $SLURM_OUT
 
 NUM_JOBS=$(lc $PARAMS_FILE)
 
@@ -94,9 +106,6 @@ fi
 
 echo Submitting \"$NUM_JOBS\" jobs
 
-SLURM_OUT=$PWD/out/$PROG
-init_dirs $SLURM_OUT
-
-sbatch -J jf-cnt -o "$SLURM_OUT/%j.out" -e "$SLURM_OUT/%j.out" \
+sbatch -J raw-qc -o "$SLURM_OUT/%j.out" -e "$SLURM_OUT/%j.err" \
   -n ${NUM_JOBS:=1} ${SLURM_EMAIL:=""} \
   $BIN/launcher.sh $PARAMS_FILE

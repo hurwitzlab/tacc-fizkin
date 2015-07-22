@@ -10,11 +10,12 @@
 # --------------------------------------------------
 
 set -u
-export BIN="$( readlink -f -- "${0%/*}" )"
+BIN="$( readlink -f -- "${0%/*}" )"
 if [ -f $BIN ]; then
   BIN=$(dirname $BIN)
 fi
-export CONFIG=$BIN/config.sh
+
+CONFIG=$BIN/config.sh
 
 if [[ ! -e $CONFIG ]]; then
   echo Cannot find \"$CONFIG\"
@@ -34,10 +35,15 @@ fi
 
 CWD=$PWD
 PROG=$(basename $0 ".sh")
-export PARAMS_FILE="$PARAMS_DIR/${PROG}.params"
-SLURM_OUT=$PWD/out/$PROG
-init_dirs $SLURM_OUT
+PARAMS_FILE="$PARAMS_DIR/${PROG}.params"
 
 echo "$PERL $WORKER_DIR/make-matrix.pl -d $MODE_DIR > $MATRIX_DIR/matrix.tab" > $PARAMS_FILE
 
-sbatch -J matrix -o "$SLURM_OUT/%j" $BIN/launcher.sh $PARAMS_FILE
+echo Submitting matrix
+
+SLURM_OUT=$PWD/out/$PROG
+init_dirs $SLURM_OUT
+
+sbatch -J matrix -o "$SLURM_OUT/%j.out" -e "$SLURM_OUT/%j.err" \
+  -n ${NUM_JOBS:=1} ${SLURM_EMAIL:=""} \
+  $BIN/launcher.sh $PARAMS_FILE

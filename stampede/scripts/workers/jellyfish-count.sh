@@ -8,10 +8,7 @@ COMMON_SH="$BIN/common.sh"
 JF_THREADS=4
 JF_HASH_SIZE="100M"
 
-#echo CONFIG \"$CONFIG\"
-#echo INPUT \"$INPUT\"
-#echo BIN \"$BIN\"
-#echo COMMON_SH \"$COMMON_SH\"
+echo HOST $(hostname)
 
 source $CONFIG
 
@@ -21,10 +18,6 @@ else
   echo Missing common \"$COMMON_SH\"
   exit 1
 fi
-
-#echo Started $(date)
-
-#echo Host $(hostname)
 
 KMERIZER="$BIN/kmerizer.pl"
 if [[ ! -e $KMERIZER ]]; then

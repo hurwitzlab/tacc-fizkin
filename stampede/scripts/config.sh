@@ -8,6 +8,11 @@
 #
 # --------------------------------------------------
 
+# 
+# Who, when to write about jobs
+# 
+SLURM_EMAIL="--mail-type=BEGIN,END --mail-user=kyclark@email.arizona.edu"
+
 #
 # Some constants
 #
@@ -19,18 +24,17 @@ export GUNZIP="/bin/gunzip"
 #
 # The main checkout
 #
-PROJECT_DIR="$WORK/pov"
-
-#
-# Where we can find the worker scripts
-#
+export PROJECT_DIR="$WORK/tacc-fizkin/stampede"
+export BIN_DIR="$PROJECT_DIR/bin"
 export SCRIPT_DIR="$PROJECT_DIR/scripts"
 export WORKER_DIR="$SCRIPT_DIR/workers"
 
 #
 # Where to put all our generated data
 #
-export DATA_DIR="$PROJECT_DIR/data"
+export DATA_DIR=$WORK/data/mouse
+#export DATA_DIR=$WORK/data/pov
+export RAW_DIR=$DATA_DIR/raw
 
 #
 # Places for Launcher bits
@@ -40,21 +44,21 @@ export PARAMS_DIR="$SCRIPT_DIR/params"
 #
 # Where to find the host genome for screening
 #
-export HOST_DIR="/rsgrps/bhurwitz/hurwitzlab/data/reference/mouse_genome/20141111 /rsgrps/bhurwitz/hurwitzlab/data/reference/soybean /rsgrps/bhurwitz/hurwitzlab/data/reference/yeast /rsgrps/bhurwitz/hurwitzlab/data/reference/wheat /rsgrps/bhurwitz/hurwitzlab/data/reference/medicago /rsgrps/bhurwitz/hurwitzlab/data/reference/zea_mays/v3"
+export REF_DIR=$WORK/data/reference
+export HOST_DIR="$REF_DIR/glycine_max $REF_DIR/human $REF_DIR/medicago_truncatula $REF_DIR/mouse $REF_DIR/wheat $REF_DIR/yeast $REF_DIR/zea_mays"
 
 #
 # Where to put the results of our steps
 #
-export HOST_JELLYFISH_DIR="$DATA_DIR/jellyfish/host"
+export HOST_JELLYFISH_DIR="$REF_DIR/jellyfish"
 
 export HOST_BOWTIE_DIR="/rsgrps/bhurwitz/hurwitzlab/data/bowtie"
 
 # 
 # Where we can find all our custom binaries (e.g., jellyfish)
 # 
-export BIN_DIR="$WORK/bin"
 export JELLYFISH="$BIN_DIR/jellyfish"
-export PERL="$BIN_DIR/perl"
+export PERL="$WORK/bin/perl"
 
 #
 # Where to put the results of our steps
@@ -65,10 +69,12 @@ export BT_ALIGNED_DIR="$DATA_DIR/bowtie-aligned"
 export SCREENED_DIR="$DATA_DIR/screened"
 export SUFFIX_DIR="$DATA_DIR/suffix"
 export KMER_DIR="$DATA_DIR/kmers"
+export REJECTED_DIR="$DATA_DIR/rejected"
 export JELLYFISH_DIR="$DATA_DIR/jellyfish"
 export FASTA_SPLIT_DIR="$DATA_DIR/fasta-split"
 export COUNT_DIR="$DATA_DIR/counts"
 export MODE_DIR="$DATA_DIR/modes"
+export READ_MODE_DIR="$DATA_DIR/read-modes"
 export MATRIX_DIR="$DATA_DIR/matrix"
 export MAX_JELLYFISH_INPUT_SIZE=500 # MB
 
